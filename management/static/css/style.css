@@ -37,7 +37,7 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background-image: url('capitallogo.jpg');
+    background-image: url('../img/capitallogo.jpg');
     background-size: 200px 200px;      /* Tamaño de cada logo en el mosaico */
     background-repeat: repeat;
     background-position: center;
