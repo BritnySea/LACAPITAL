@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'api',
     'hamburger',
     'management',
+    'corsheaders', 
 
 ]
 
@@ -67,8 +68,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
 ]
-
+CORS_ALLOW_ALL_ORIGINS = True  # <-- Permite cualquier origen
+CORS_ALLOW_CREDENTIALS = True  # <-- Permite cookies entre dominios
 ROOT_URLCONF = 'LaCapital.urls'
 
 TEMPLATES = [
