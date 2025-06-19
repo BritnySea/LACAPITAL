@@ -1,1 +1,1 @@
-web: python manage.py collectstatic && gunicorn LaCapital.wsgi 
+web: python manage.py collectstatic --noinput && gunicorn LaCapital.wsgi
