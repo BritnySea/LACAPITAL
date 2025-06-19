@@ -1,1 +1,1 @@
-wen: gunicorn LaCapital.wsgi
+web: gunicorn LaCapital.wsgi
