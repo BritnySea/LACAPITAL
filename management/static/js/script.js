@@ -186,7 +186,7 @@ form.addEventListener('submit', async (e) => {
     mostrarEstado('Enviando datos al servidor...', false, false);
     
     // Enviar datos al servidor Django
-    const response = await fetch('http://localhost:8000/api/hamburguesas/', {
+    const response = await fetch('https://lacapital-production.up.railway.app/api/hamburguesas/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
