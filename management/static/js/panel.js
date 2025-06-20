@@ -36,13 +36,6 @@ const cardHTML = (h, idx) => `
 
 /* --------------- init --------------- */
 document.addEventListener("DOMContentLoaded", async () => {
-  if (localStorage.getItem(LSID) !== "true") { location.href = "index.html"; return; }
-
-  const lista = document.getElementById("lista-hamburguesas");
-  document.getElementById("cerrarSesionBtn").onclick = () => {
-    localStorage.removeItem(LSID);
-    location.href = "index.html";
-  };
 
   try {
     const data = await fetch(API + "listar/").then(r => r.json());

@@ -26,6 +26,7 @@ def crear_hamburguesa(request):
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def actualizar_hamburguesa(request, pk):
     try:
         hamburguesa = Hamburguesa.objects.get(pk=pk)
@@ -39,6 +40,7 @@ def actualizar_hamburguesa(request, pk):
     return Response(serializer.errors, status=400)
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def eliminar_hamburguesa(request, pk):
     try:
         hamburguesa = Hamburguesa.objects.get(pk=pk)
