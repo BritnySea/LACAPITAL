@@ -9,8 +9,8 @@ const corto = url => {
 };
 
 const cardHTML = (h, idx) => `
-  <div class="hamburguesa">
-    <div class="numero">${idx + 1}</div>               <!-- contador bonito -->
+  <div class="hamburguesa" data-id="${h.id}">
+    <div class="numero">${idx + 1}</div>
 
     <div class="info">
       <h3>${h.nombre}</h3>
@@ -22,11 +22,12 @@ const cardHTML = (h, idx) => `
     </div>
 
     <div class="derecha">
-      <div class="foto"><img src="${h.imagen}" alt="Foto de ${h.nombre}"></div>
+      <div class="foto">
+        <img src="${h.imagen}" alt="Foto de ${h.nombre}">
+      </div>
       <div class="texto-textura">
         <p><strong>Textura:</strong> ${corto(h.textura_modelo)}</p>
       </div>
-
       <div class="botones">
         <button onclick="editar(${h.id})">✏️ Editar</button>
         <button onclick="eliminar(${h.id})">🗑️ Eliminar</button>
@@ -36,9 +37,7 @@ const cardHTML = (h, idx) => `
 
 /* --------------- init --------------- */
 document.addEventListener("DOMContentLoaded", async () => {
-  // Obtener referencia al contenedor
   const lista = document.getElementById('lista-hamburguesas');
-
   try {
     const data = await fetch(API + "listar/").then(r => r.json());
     lista.innerHTML = data.map(cardHTML).join("");
@@ -54,11 +53,19 @@ const editar = id => {
 
 async function eliminar(id) {
   if (!confirm("¿Eliminar esta hamburguesa?")) return;
+
+  const url = `${API}${id}/eliminar/`;  // aquí se inserta dinámicamente el ID
   try {
-    await fetch(`${API}${id}/eliminar/`, { method: "DELETE" });
-    location.reload();
+    const resp = await fetch(url, { method: "DELETE" });
+    if (!resp.ok) throw new Error(`Error ${resp.status}`);
+
+    // Quitar la tarjeta del DOM sin recargar la página
+    const card = document.querySelector(`.hamburguesa[data-id="${id}"]`);
+    if (card) card.remove();
+
+    alert("Hamburguesa eliminada correctamente.");
   } catch (e) {
-    console.error(e);
-    alert("No se pudo eliminar");
+    console.error("Falló eliminar:", e);
+    alert("No se pudo eliminar la hamburguesa. Intenta de nuevo.");
   }
 }
