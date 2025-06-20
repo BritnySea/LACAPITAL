@@ -5,29 +5,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>La Capital – Admin</title>
+  <!-- CSS desde static/ -->
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
 <body>
   <div id="panel">
     <header>
       <div class="center">LA CAPITAL</div>
-      <!-- Enlace para cerrar sesión -->
-      <a id="cerrarSesionBtn" href="{% url 'logout' %}" class="link-button">Cerrar Sesión</a>
+      <a id="cerrarSesionBtn" href="index.html" class="link-button">Cerrar Sesión</a>
     </header>
 
-
     <section class="agregar">
-      <!-- Enlace para ir al formulario de agregar hamburguesa -->
-      <a id="agregarBtn" href="{% url 'formulario_hamburguesa' %}" class="card-button">
+      <a id="agregarBtn" href="formulario.html" class="card-button">
         + Agregar Hamburguesa
       </a>
     </section>
 
-    <section id="lista-hamburguesas">
-      <!-- Aquí irán los elementos cargados por JS -->
-    </section>
+    <section id="lista-hamburguesas"></section>
   </div>
 
-  <script src="{% static 'js/script.js' %}" defer></script>
+  <!-- JS desde static/ -->
+  <script src="{% static 'js/panel.js' %}" defer></script>
 </body>
 </html>
