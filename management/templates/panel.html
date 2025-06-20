@@ -12,11 +12,11 @@
   <div id="panel">
     <header>
       <div class="center">LA CAPITAL</div>
-      <a id="cerrarSesionBtn" href="index.html" class="link-button">Cerrar Sesión</a>
+      <a id="cerrarSesionBtn"  href="{% url 'logout' %}" class="link-button">Cerrar Sesión</a>
     </header>
 
     <section class="agregar">
-      <a id="agregarBtn" href="formulario.html" class="card-button">
+      <a id="agregarBtn" href="{% url 'formulario_hamburguesa' %}" class="card-button">
         + Agregar Hamburguesa
       </a>
     </section>
