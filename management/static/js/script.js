@@ -21,6 +21,9 @@ const storage = getStorage(app);
 const form = document.getElementById('formHamburguesa');
 const anuncio = document.getElementById('anuncioCreacion');
 const textoAnuncio = document.getElementById('textoAnuncio');
+const guardarBtn = document.getElementById('guardarBtn');
+
+let submitIntentado = false;   // ¿ya se intentó enviar una vez?
 
 // Función para mostrar mensajes de estado
 function mostrarEstado(mensaje, esError = false, autoOcultar = true) {
@@ -73,6 +76,11 @@ const campos = [
     msg: "Ancho 1–100 cm."
   },
   {
+    id: "peso", isFile: false,
+    validator: v => { const n = +v; return n>=1&&n<=500; },
+    msg: "Peso 1–500 g."
+  },
+  {
     id: "precio", isFile: false,
     validator: v => {
       const num = parseFloat(v.replace(",", "."));
@@ -83,6 +91,7 @@ const campos = [
 ];
 
 // Validar un campo individual
+// Dentro de la función validarCampo
 function validarCampo(campo) {
   const elemento = document.getElementById(campo.id);
   const errorElement = document.getElementById(`error-${campo.id}`);
@@ -96,13 +105,14 @@ function validarCampo(campo) {
 
   if (!campo.validator(valor)) {
     errorElement.textContent = campo.msg;
+    errorElement.classList.add('error-visible'); // Añade esta línea
     return false;
   } else {
     errorElement.textContent = '';
+    errorElement.classList.remove('error-visible'); // Añade esta línea
     return true;
   }
 }
-
 // Validar todo el formulario
 function validarFormulario() {
   let valido = true;
@@ -112,6 +122,12 @@ function validarFormulario() {
     }
   });
   return valido;
+}
+
+// Habilitar/deshabilitar el botón según la validez después de un intento fallido
+function actualizarEstadoBoton() {
+  if (!submitIntentado) return;          // si aún no se intentó enviar, no tocar el botón
+  guardarBtn.disabled = !validarFormulario();
 }
 
 // Función para subir archivo a Firebase
@@ -140,13 +156,14 @@ function getCookie(name) {
 // Evento de envío del formulario
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  
-  // Validar formulario antes de continuar
+  submitIntentado = true;
+
   if (!validarFormulario()) {
     mostrarEstado('Por favor, corrige los errores en el formulario.', true, false);
+    guardarBtn.disabled = true;          // Bloquea el botón hasta que todo sea válido
     return;
   }
-  
+
   // Mostrar estado de subida (sin auto-ocultar)
   mostrarEstado('Subiendo archivos a Firebase...', false, false);
   
@@ -155,6 +172,7 @@ form.addEventListener('submit', async (e) => {
   const descripcion = document.getElementById('descripcion').value;
   const tamanio_alto = document.getElementById('tamanio_alto').value;
   const tamanio_ancho = document.getElementById('tamanio_ancho').value;
+  const peso = document.getElementById('peso').value;
   const precio = document.getElementById('precio').value;
   
   // Obtener archivos
@@ -179,6 +197,7 @@ form.addEventListener('submit', async (e) => {
       textura_modelo: texturaUrl,
       tamaño_alto: parseFloat(tamanio_alto),
       tamaño_ancho: parseFloat(tamanio_ancho),
+      peso: parseFloat(peso),
       precio: parseFloat(precio.replace(",", "."))
     };
 
@@ -200,15 +219,15 @@ form.addEventListener('submit', async (e) => {
     if (response.ok) {
       mostrarEstado('¡Hamburguesa creada con éxito!', false, true);
       form.reset();
-      
+      submitIntentado = false;           // resetea la lógica de bloqueo tras éxito
+      guardarBtn.disabled = false;
+
       // Redirigir después de 2 segundos
-// Redirigir después de 2 segundos
-    setTimeout(() => {
-      window.location.href = URL_PANEL;
-    }, 2000);
+      setTimeout(() => {
+        window.location.href = URL_PANEL;
+      }, 2000);
 
     } else {
-      // Mostrar errores específicos del servidor
       let errorMsg = 'Error en el servidor';
       if (result.errors) {
         errorMsg = Object.values(result.errors).join(', ');
@@ -237,9 +256,22 @@ document.getElementById('cancelarBtn').addEventListener('click', () => {
 campos.forEach(campo => {
   const elemento = document.getElementById(campo.id);
   if (elemento) {
-    elemento.addEventListener('blur', () => validarCampo(campo));
+    // Validar al salir del campo
+    elemento.addEventListener('blur', () => {
+      validarCampo(campo);
+      actualizarEstadoBoton();
+    });
+    // Validar mientras se escribe / cambia
     if (campo.isFile) {
-      elemento.addEventListener('change', () => validarCampo(campo));
+      elemento.addEventListener('change', () => {
+        validarCampo(campo);
+        actualizarEstadoBoton();
+      });
+    } else {
+      elemento.addEventListener('input', () => {
+        validarCampo(campo);
+        actualizarEstadoBoton();
+      });
     }
   }
 });
