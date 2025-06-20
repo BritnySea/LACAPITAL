@@ -36,20 +36,29 @@ const cardHTML = (h, idx) => `
 
 /* --------------- init --------------- */
 document.addEventListener("DOMContentLoaded", async () => {
+  // Obtener referencia al contenedor
+  const lista = document.getElementById('lista-hamburguesas');
 
   try {
     const data = await fetch(API + "listar/").then(r => r.json());
     lista.innerHTML = data.map(cardHTML).join("");
-  } catch { lista.innerHTML = "<p style='color:red;text-align:center'>Error al cargar.</p>"; }
+  } catch {
+    lista.innerHTML = "<p style='color:red;text-align:center'>Error al cargar.</p>";
+  }
 });
 
 /* ------ handlers globales ------ */
-const editar   = id => location.href = `formulario.html?id=${id}`;
+const editar = id => {
+  location.href = `formulario.html?id=${id}`;
+};
 
-async function eliminar(id){
+async function eliminar(id) {
   if (!confirm("¿Eliminar esta hamburguesa?")) return;
-  try{
-    await fetch(`${API}${id}/eliminar/`, { method:"DELETE" });
+  try {
+    await fetch(`${API}${id}/eliminar/`, { method: "DELETE" });
     location.reload();
-  }catch(e){ console.error(e); alert("No se pudo eliminar"); }
+  } catch (e) {
+    console.error(e);
+    alert("No se pudo eliminar");
+  }
 }
